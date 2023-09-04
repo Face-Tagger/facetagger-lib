@@ -1,15 +1,17 @@
 name: Test FaceTagger Library
 
 on:
-  push:
-    branches:
-      - develop
-      - release
   pull_request:
+    types: [opened, synchronize]
     branches:
       - main
       - develop
       - release
+  push:
+    branches:
+      - release
+      - develop
+
 
 jobs:
   build_and_test:
