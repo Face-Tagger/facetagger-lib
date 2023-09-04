@@ -1,2 +1,2 @@
 def face_tagger():
-    pass
+    return "Hello Face Tagger"
