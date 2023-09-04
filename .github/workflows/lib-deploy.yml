@@ -23,7 +23,6 @@ jobs:
 
       - name: Install dependencies
         run:
-          pip install twine --user
           pip install build --user
 
       - name: Build a binary wheel and a source tarball
@@ -33,13 +32,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-
-      - name: Publish package to Github Packages
-        env:
-          TWINE_USERNAME: ${{ github.actor }}
-          TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run:
-          twine upload --repository-url https://upload.pkg.github.com/Face-Tagger/facetagger-lib dist/*
 
       - name: Create Github release draft
         uses: actions/create-release@v1
