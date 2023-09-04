@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "face_tagger"
+name = "py_face_tagger"
 version = "0.0.1"
 authors = [
   { name="Bae SungJoon", email="clcc001@naver.com" },
