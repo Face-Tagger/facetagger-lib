@@ -11,7 +11,7 @@ authors = [
   { name="Sohn YoungJin", email="sonkim1001@naver.com" },
   { name="Choi JunHwan", email="csd100j@gmail.com" }
 ]
-description = "A library for face recognition in multiple images and classification of photos containing each individual.
+description = "A library for face recognition in multiple images and classification of photos containing each individual."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
