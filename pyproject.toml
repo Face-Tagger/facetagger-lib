@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "face_tagger"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Bae SungJoon", email="clcc001@naver.com" },
   { name="Yoon JongBeom", email="home99032@naver.com" },
