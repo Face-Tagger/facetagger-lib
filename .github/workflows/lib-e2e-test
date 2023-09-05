@@ -1,0 +1,24 @@
+name: FaceTagger E2E Test
+
+on:
+  push:
+    branches:
+      - release
+      - main
+
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest
