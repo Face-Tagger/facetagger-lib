@@ -23,7 +23,7 @@ pip install face-tagger
 
 ## Usage
 ```python
-
+# Sample Code
 ```
 
 (Note: The above code is just a fictional example and may not represent the actual usage of the Face Tagger library.)
