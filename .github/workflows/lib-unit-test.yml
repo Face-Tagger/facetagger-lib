@@ -1,15 +1,13 @@
-name: Test FaceTagger Library
+name: FaceTagger Unit Test
 
 on:
   push:
     branches:
-      - release
       - develop
-      - main
 
 
 jobs:
-  build_and_test:
+  unit-test:
     runs-on: ubuntu-latest
 
     steps:
