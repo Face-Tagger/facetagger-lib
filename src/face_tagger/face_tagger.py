@@ -1,8 +1,10 @@
-import cv2
+import os
+import sys
 
 from src.face_tagger.classifier import Classifier
 from src.face_tagger.detector import Detector
 from src.face_tagger.embedder import Embedder
+from src.face_tagger.utils import resize_image
 
 
 class FaceTagger:
@@ -13,7 +15,6 @@ class FaceTagger:
     def __init__(self, use_gpu=False, image_resize_factor=1.0):
         """
         Constructor of FaceTagger class.
-
         :param use_gpu: Use GPU or not.
         :param image_resize_factor: Resize factor of images.
         """
@@ -23,64 +24,89 @@ class FaceTagger:
         self.classifier = Classifier()
         self.image_resize_factor = image_resize_factor
 
+    def detect_and_embed_faces(self, image):
+        """
+        Detects and embeds faces in an image.
+        :param image: Image to detect and embed faces.
+        :return: Cropped faces and their embeddings.
+        """
+
+        face_embeddings = []
+        cropped_faces = self.detector.detect_face_and_crop(image)
+
+        for cropped_face in cropped_faces:
+            face_embedding = self.embedder.compute_embeddings(cropped_face)
+            face_embeddings.append(face_embedding)
+
+        return cropped_faces, face_embeddings
+
+    def group_and_classify(self, face_embeddings, processed_image_ids):
+        """
+        Groups and classifies images based on the person in the image.
+        :param face_embeddings: Embeddings of faces.
+        :param processed_image_ids: Image ids of the processed images.
+        :return: Classified images.
+        """
+
+        classified_images = {"unclassified_images": []}
+        groups = self.classifier.classify_faces(face_embeddings)
+
+        face_counts_per_image = {}
+        for image_id in processed_image_ids:
+            face_counts_per_image[image_id] = face_counts_per_image.get(image_id, 0) + 1
+
+        for group, image_id in zip(groups, processed_image_ids):
+            if group != -1:
+                group_key = f"group_{group + 1}"
+
+                if group_key not in classified_images:
+                    classified_images[group_key] = {"main": None, "others": []}
+
+                if face_counts_per_image[image_id] == 1:
+                    classified_images[group_key]["main"] = image_id
+                    continue
+
+                if image_id not in classified_images[group_key]["others"]:
+                    classified_images[group_key]["others"].append(image_id)
+
+        return classified_images
+
     def classify_images_by_person(self, image_objects):
         """
         Classifies images based on the person in the image.
-
         :param image_objects: Images to classify.
         :return: Classified images.
         """
 
         face_embeddings = []
         processed_image_ids = []
-        face_counts_per_image = {}
+        unclassified_images = []
 
-        classified_images = {"unclassified_images": []}
+        sys.stdout = open(os.devnull, 'w')
 
         # Embedding faces in each image.
         for image_object in image_objects:
             if self.image_resize_factor != 1.0:
-                image = cv2.resize(image_object.image_data, (
-                    int(image_object.image_data.shape[1] * self.image_resize_factor),
-                    int(image_object.image_data.shape[0] * self.image_resize_factor)))
+                image = resize_image(image_object.image_data,
+                                     int(image_object.image_data.shape[1] * self.image_resize_factor),
+                                     int(image_object.image_data.shape[0] * self.image_resize_factor))
             else:
                 image = image_object.image_data
 
             if image is not None:
-                cropped_faces = self.detector.detect_face_and_crop(image)
+                cropped_faces, current_face_embeddings = self.detect_and_embed_faces(image)
+                face_embeddings.extend(current_face_embeddings)
 
                 if len(cropped_faces) == 0:
                     # If there is no face in the image, add the image to the list of unclassified images.
-                    classified_images["unclassified_images"].append(image_object.image_id)
+                    unclassified_images.append(image_object.image_id)
                     continue
 
-                face_counts_per_image[image_object.image_id] = len(cropped_faces)
+                processed_image_ids.extend([image_object.image_id] * len(cropped_faces))
 
-                # Compute embeddings of cropped faces.
-                for cropped_face in cropped_faces:
-                    face_embedding = self.embedder.compute_embeddings(cropped_face)
-                    face_embeddings.append(face_embedding)
-                    processed_image_ids.append(image_object.image_id)
+        sys.stdout = sys.__stdout__
 
-        # Classifying embedded faces.
-        groups = self.classifier.classify_faces(face_embeddings)
-
-        # Grouping images by person.
-        for group, image_id in zip(groups, processed_image_ids):
-            if group != -1:
-                group_key = f"group_{group + 1}"
-
-                if group_key not in classified_images:
-                    # If the group is not in the dictionary, add the group.
-                    classified_images[group_key] = {"main": None, "others": []}
-
-                if face_counts_per_image[image_id] == 1:
-                    # If there is only one face in the image, the face is the main face.
-                    classified_images[group_key]["main"] = image_id
-                    continue
-
-                if image_id not in classified_images[group_key]["others"]:
-                    # If the image is not in the list of other images, add the image.
-                    classified_images[group_key]["others"].append(image_id)
+        classified_images = self.group_and_classify(face_embeddings, processed_image_ids)
+        classified_images["unclassified_images"] = unclassified_images
 
         return classified_images

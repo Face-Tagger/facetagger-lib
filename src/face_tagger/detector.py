@@ -13,22 +13,35 @@ class Detector:
 
         self.face_detector = MTCNN()
 
-    def detect_face_and_crop(self, image):
+    def detect_face(self, image):
         """
-        Detects faces in an image and returns cropped face images.
-
+        Detects faces in an image.
         :param image: Image to detect faces.
-        :return: Cropped face images.
+        :return: Detected faces with their bounding boxes.
         """
 
         # Face detection using MTCNN.
-        faces = self.face_detector.detect_faces(image)
+        return self.face_detector.detect_faces(image)
 
-        # Crop face areas in the image.
-        cropped_faces = []
-        for face in faces:
-            x, y, width, height = face['box']
-            cropped_face = image[y:y + height, x:x + width]
-            cropped_faces.append(cropped_face)
+    def crop(self, image, face):
+        """
+        Crops the face area from the image.
+        :param image: Image from which to crop the face.
+        :param face: Detected face with bounding box.
+        :return: Cropped face image.
+        """
 
-        return cropped_faces
+        x, y, width, height = face['box']
+
+        return image[y:y + height, x:x + width]
+
+    def detect_face_and_crop(self, image):
+        """
+        Detects faces in an image and returns cropped face images.
+        :param image: Image to detect faces.
+        :return: List of cropped face images.
+        """
+
+        faces = self.detect_face(image)
+
+        return [self.crop(image, face) for face in faces]
