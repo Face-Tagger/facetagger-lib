@@ -11,12 +11,14 @@ from src.face_tagger.classifier import Classifier
 from src.face_tagger.detector import Detector
 from src.face_tagger.embedder import Embedder
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class TestEmbedder(unittest.TestCase):
 
     def setUp(self):
         self.embedder = Embedder(use_gpu=False)
-        self.sample_image = cv2.imread("resources/lenna.png")
+        self.sample_image = cv2.imread(os.path.join(BASE_DIR, "resources", "one_person_1.jpg"))
 
     def test_prepare_image_tensor(self):
         tensor = self.embedder.prepare_image_tensor(self.sample_image)
@@ -34,17 +36,17 @@ class TestDetector(unittest.TestCase):
 
     def test_detect_one_face(self):
         test_cases_one = [
-            "resources/one_person_1.jpg",
-            "resources/one_person_2.jpg",
-            "resources/one_person_3.jpg",
-            "resources/one_person_4.jpg",
-            "resources/one_person_5.jpg",
-            "resources/one_person_6.jpg"
+            os.path.join(BASE_DIR, "resources", "one_person_1.jpg"),
+            os.path.join(BASE_DIR, "resources", "one_person_2.jpg"),
+            os.path.join(BASE_DIR, "resources", "one_person_3.jpg"),
+            os.path.join(BASE_DIR, "resources", "one_person_4.jpg"),
+            os.path.join(BASE_DIR, "resources", "one_person_5.jpg"),
+            os.path.join(BASE_DIR, "resources", "one_person_6.jpg")
         ]
 
         test_cases_multiple = {
-            "resources/two_people.jpg": 2,
-            "resources/seven_people.jpg": 7
+            os.path.join(BASE_DIR, "resources", "two_people.jpg"): 2,
+            os.path.join(BASE_DIR, "resources", "seven_people.jpg"): 7
         }
 
         for file_path in test_cases_one:
@@ -87,15 +89,15 @@ class TestFaceTagger(unittest.TestCase):
 
     def test_detect_and_embed_single_faces(self):
         for i in range(1, 3):
-            image = cv2.imread(f"resources/one_person_{i}.jpg")
+            image = cv2.imread(os.path.join(BASE_DIR, "resources", f"one_person_{i}.jpg"))
             cropped_faces, face_embeddings = self.face_tagger.detect_and_embed_faces(image)
             self.assertEqual(len(cropped_faces), 1)
             self.assertEqual(len(face_embeddings), 1)
 
     def test_detect_and_embed_multiple_faces(self):
         test_cases = {
-            "resources/two_people.jpg": 2,
-            "resources/seven_people.jpg": 7,
+            os.path.join(BASE_DIR, "resources", "two_people.jpg"): 2,
+            os.path.join(BASE_DIR, "resources", "seven_people.jpg"): 7,
         }
 
         for file_path, expected_faces in test_cases.items():

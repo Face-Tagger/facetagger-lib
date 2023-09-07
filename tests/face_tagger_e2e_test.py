@@ -1,8 +1,11 @@
+import os
 import unittest
 
 import cv2
 
 from src.face_tagger import FaceTagger
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestFaceTagger(unittest.TestCase):
@@ -19,7 +22,7 @@ class TestFaceTagger(unittest.TestCase):
         }
 
         for image_name, count in image_data_map.items():
-            image_data = cv2.imread(f"resources/{image_name}")
+            image_data = cv2.imread(os.path.join(BASE_DIR, "resources", image_name))
 
             for i in range(count):
                 image_obj = type("ImageObject", (object,), {
@@ -35,4 +38,3 @@ class TestFaceTagger(unittest.TestCase):
         self.assertEqual(len(result["unclassified_images"]), 1)
         self.assertEqual(len(result["group_1"]["others"]), 2)
         self.assertEqual(len(result["group_2"]["others"]), 1)
-
