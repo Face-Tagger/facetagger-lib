@@ -110,6 +110,7 @@ class FaceTagger:
         sys.stdout = sys.__stdout__
 
         classified_images = self.group_and_classify(face_embeddings, processed_image_ids)
-        classified_images["unclassified_images"].extend(unclassified_images)
+        classified_images["unclassified_images"] = list(
+            set(classified_images["unclassified_images"]).union(set(unclassified_images)))
 
         return classified_images
