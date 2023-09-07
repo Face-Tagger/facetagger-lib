@@ -62,17 +62,17 @@ Face Tagger follows a systematic process to classify images:
 
 To utilize the Face Tagger library, follow these steps:
 
-1. **Define an image generator**:
+1. **Load image with functions defined in utils module**:
    The generator function allows you to loop through all images in a specified directory and create `ImageObject`
    instances for each one.
 
 ```python
-def image_generator(image_dir):
-    for filename in os.listdir(image_dir):
-        img = cv2.imread(os.path.join(image_dir, filename))
-        if img is not None:
-            yield ImageObject(filename, img)
+from utils import *
+
+image_objects = load_images_from_directory("path_to_images_directory")
 ```
+
+Replace `path_to_images_directory` with the path to your image directory.
 
 (Note: You don't necessarily need to use a generator for image_objects. You can also create ImageObject list from loaded
 images in an array and pass them.)
@@ -93,6 +93,8 @@ Here is the representation of the `ImageObject` class:
    and `min_similarity_face_count`.
 
 ```python
+from face_tagger import FaceTagger
+
 face_tagger = FaceTagger(
     use_gpu=False,
     image_resize_factor=1.0,
@@ -106,11 +108,9 @@ face_tagger = FaceTagger(
    generator function to classify the images.
 
 ```python
-result = face_tagger.classify_images_by_person(image_objects=image_generator("path_to_images_directory"))
+result = face_tagger.classify_images_by_person(image_objects=image_objects)
 print(result)
 ```
-
-Replace `path_to_images_directory` with the path to your image directory.
 
 ---
 
