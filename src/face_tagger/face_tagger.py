@@ -12,7 +12,7 @@ class FaceTagger:
     Main class of the face tagger module.
     """
 
-    def __init__(self, use_gpu=False, image_resize_factor=1.0):
+    def __init__(self, use_gpu=False, image_resize_factor=1.0, min_faces_to_be_group=3, min_similarity_face_count=2):
         """
         Constructor of FaceTagger class.
         :param use_gpu: Use GPU or not.
@@ -21,7 +21,8 @@ class FaceTagger:
 
         self.detector = Detector()
         self.embedder = Embedder(use_gpu)
-        self.classifier = Classifier()
+        self.classifier = Classifier(min_faces_to_be_group=min_faces_to_be_group,
+                                     min_similarity_face_count=min_similarity_face_count)
         self.image_resize_factor = image_resize_factor
 
     def detect_and_embed_faces(self, image):
@@ -62,12 +63,14 @@ class FaceTagger:
                 if group_key not in classified_images:
                     classified_images[group_key] = {"main": None, "others": []}
 
-                if face_counts_per_image[image_id] == 1:
+                if face_counts_per_image[image_id] == 1 and classified_images[group_key]["main"] is None:
                     classified_images[group_key]["main"] = image_id
                     continue
 
                 if image_id not in classified_images[group_key]["others"]:
                     classified_images[group_key]["others"].append(image_id)
+            else:
+                classified_images["unclassified_images"].append(image_id)
 
         return classified_images
 
@@ -107,6 +110,7 @@ class FaceTagger:
         sys.stdout = sys.__stdout__
 
         classified_images = self.group_and_classify(face_embeddings, processed_image_ids)
-        classified_images["unclassified_images"] = unclassified_images
+        classified_images["unclassified_images"] = list(
+            set(classified_images["unclassified_images"]).union(set(unclassified_images)))
 
         return classified_images

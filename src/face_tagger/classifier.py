@@ -7,12 +7,15 @@ class Classifier:
     Class for face classification.
     """
 
-    def __init__(self):
+    def __init__(self, min_faces_to_be_group=3, min_similarity_face_count=2):
         """
         Constructor of Classifier class.
+        :param min_faces_to_be_group: Minimum number of faces required to be classified as a group.
+        :param min_similarity_Face_count: Minimum number of similar faces required to be included in a group.
         """
 
-        pass
+        self.min_faces_to_be_group = min_faces_to_be_group
+        self.min_similarity_face_count = min_similarity_face_count
 
     def convert_to_numpy(self, face_embeddings):
         """
@@ -30,7 +33,8 @@ class Classifier:
         :return: Cluster labels.
         """
 
-        hdbscan_cluster = hdbscan.HDBSCAN(min_cluster_size=2).fit(embeddings_np)
+        hdbscan_cluster = hdbscan.HDBSCAN(min_samples=self.min_similarity_face_count,
+                                          min_cluster_size=self.min_faces_to_be_group).fit(embeddings_np)
 
         return hdbscan_cluster.labels_
 
