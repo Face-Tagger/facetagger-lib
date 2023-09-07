@@ -1,10 +1,10 @@
 import os
 import sys
 
-from src.face_tagger.classifier import Classifier
-from src.face_tagger.detector import Detector
-from src.face_tagger.embedder import Embedder
-from src.face_tagger.utils import resize_image
+from .classifier import Classifier
+from .detector import Detector
+from .embedder import Embedder
+from .utils import resize_image
 
 
 class FaceTagger:

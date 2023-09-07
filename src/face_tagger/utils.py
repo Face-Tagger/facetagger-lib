@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from src.face_tagger.models import ImageObject
+from .models import ImageObject
 
 
 def resize_image(image, width, height):
