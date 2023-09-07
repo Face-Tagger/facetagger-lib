@@ -63,12 +63,14 @@ class FaceTagger:
                 if group_key not in classified_images:
                     classified_images[group_key] = {"main": None, "others": []}
 
-                if face_counts_per_image[image_id] == 1:
+                if face_counts_per_image[image_id] == 1 and classified_images[group_key]["main"] is None:
                     classified_images[group_key]["main"] = image_id
                     continue
 
                 if image_id not in classified_images[group_key]["others"]:
                     classified_images[group_key]["others"].append(image_id)
+            else:
+                classified_images["unclassified_images"].append(image_id)
 
         return classified_images
 
@@ -108,6 +110,6 @@ class FaceTagger:
         sys.stdout = sys.__stdout__
 
         classified_images = self.group_and_classify(face_embeddings, processed_image_ids)
-        classified_images["unclassified_images"] = unclassified_images
+        classified_images["unclassified_images"].extend(unclassified_images)
 
         return classified_images
