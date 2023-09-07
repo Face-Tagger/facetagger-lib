@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from PIL import Image
 
 
@@ -22,3 +23,13 @@ def convert_bgr_to_rgb(image):
     """
 
     return Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+
+def bytes_to_cvimage(byte_stream):
+    """
+    Convert byte stream to OpenCV image format.
+    :param byte_stream: Bytes representing image data.
+    :return: OpenCV format image.
+    """
+
+    return cv2.imdecode(np.frombuffer(byte_stream, np.uint8), cv2.IMREAD_COLOR)
