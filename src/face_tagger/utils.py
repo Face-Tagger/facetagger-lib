@@ -1,6 +1,10 @@
+import os
+
 import cv2
 import numpy as np
 from PIL import Image
+
+from src.face_tagger.models import ImageObject
 
 
 def resize_image(image, width, height):
@@ -33,3 +37,25 @@ def bytes_to_cvimage(byte_stream):
     """
 
     return cv2.imdecode(np.frombuffer(byte_stream, np.uint8), cv2.IMREAD_COLOR)
+
+
+def load_images_from_directory(images_path):
+    """
+    Generate image objects from the given directory.
+    :param images_path: Directory containing images.
+    :return: ImageObject generator.
+    """
+    for filename in os.listdir(images_path):
+        image_data = cv2.imread(os.path.join(images_path, filename))
+        if image_data is not None:
+            yield ImageObject(filename, image_data)
+
+
+def load_image(image_path):
+    """
+    Load image from the given path.
+    :param image_path: Path to the image.
+    :return: ImageObject.
+    """
+    image_data = cv2.imread(image_path)
+    return ImageObject(image_path, image_data)
