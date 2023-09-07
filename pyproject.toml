@@ -19,12 +19,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
-[project.urls]
-"Homepage" = "https://github.com/Face-Tagger"
-"Bug Tracker" = "https://github.com/Face-Tagger/facetagger-lib/issues"
-
-[project]
 dependencies = [
     'absl-py==1.4.0',
     'astunparse==1.6.3',
@@ -83,3 +77,7 @@ dependencies = [
     'Werkzeug==2.3.7',
     'wrapt==1.15.0'
 ]
+
+[project.urls]
+"Homepage" = "https://github.com/Face-Tagger"
+"Bug Tracker" = "https://github.com/Face-Tagger/facetagger-lib/issues"
