@@ -12,7 +12,7 @@ class FaceTagger:
     Main class of the face tagger module.
     """
 
-    def __init__(self, use_gpu=False, image_resize_factor=1.0):
+    def __init__(self, use_gpu=False, image_resize_factor=1.0, min_faces_to_be_group=3, min_similarity_face_count=2):
         """
         Constructor of FaceTagger class.
         :param use_gpu: Use GPU or not.
@@ -21,7 +21,8 @@ class FaceTagger:
 
         self.detector = Detector()
         self.embedder = Embedder(use_gpu)
-        self.classifier = Classifier()
+        self.classifier = Classifier(min_faces_to_be_group=min_faces_to_be_group,
+                                     min_similarity_face_count=min_similarity_face_count)
         self.image_resize_factor = image_resize_factor
 
     def detect_and_embed_faces(self, image):
