@@ -4,16 +4,16 @@ build-backend = "hatchling.build"
 
 [project]
 name = "face_tagger"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
+  { name="Sohn YoungJin", email="sonkim1001@naver.com" },
   { name="Bae SungJoon", email="clcc001@naver.com" },
   { name="Yoon JongBeom", email="home99032@naver.com" },
-  { name="Sohn YoungJin", email="sonkim1001@naver.com" },
   { name="Choi JunHwan", email="csd100j@gmail.com" }
 ]
 description = "A library for face recognition in multiple images and classification of photos containing each individual."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
