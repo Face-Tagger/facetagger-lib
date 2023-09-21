@@ -12,16 +12,18 @@ class FaceTagger:
     Main class of the face tagger module.
     """
 
-    def __init__(self, use_gpu=False, image_resize_factor=1.0, min_faces_to_be_group=3, min_similarity_face_count=2):
+    def __init__(self, use_gpu=False, image_resize_factor=1.0, min_faces_to_identify_human=3, min_similarity_face_count=2):
         """
         Constructor of FaceTagger class.
         :param use_gpu: Use GPU or not.
         :param image_resize_factor: Resize factor of images.
+        :param min_faces_to_identify_human: Minimum number of faces required to be classified as a human.
+        :param min_similarity_face_count: Minimum number of similar faces required to be included in a group.
         """
 
         self.detector = Detector()
         self.embedder = Embedder(use_gpu)
-        self.classifier = Classifier(min_faces_to_be_group=min_faces_to_be_group,
+        self.classifier = Classifier(min_faces_to_identify_human=min_faces_to_identify_human,
                                      min_similarity_face_count=min_similarity_face_count)
         self.image_resize_factor = image_resize_factor
 
@@ -56,6 +58,8 @@ class FaceTagger:
         for image_id in processed_image_ids:
             face_counts_per_image[image_id] = face_counts_per_image.get(image_id, 0) + 1
 
+        unclassified_image_ids_set = set(processed_image_ids)
+
         for group, image_id in zip(groups, processed_image_ids):
             if group != -1:
                 group_key = f"group_{group + 1}"
@@ -65,12 +69,13 @@ class FaceTagger:
 
                 if face_counts_per_image[image_id] == 1 and classified_images[group_key]["main"] is None:
                     classified_images[group_key]["main"] = image_id
-                    continue
+                else:
+                    if image_id not in classified_images[group_key]["others"]:
+                        classified_images[group_key]["others"].append(image_id)
 
-                if image_id not in classified_images[group_key]["others"]:
-                    classified_images[group_key]["others"].append(image_id)
-            else:
-                classified_images["unclassified_images"].append(image_id)
+                unclassified_image_ids_set.discard(image_id)
+
+        classified_images["unclassified_images"].extend(list(unclassified_image_ids_set))
 
         return classified_images
 
