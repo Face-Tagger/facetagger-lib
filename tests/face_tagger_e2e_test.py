@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class TestFaceTagger(unittest.TestCase):
     def setUp(self):
-        self.face_tagger = FaceTagger(use_gpu=False, min_faces_to_be_group=2, min_similarity_face_count=1)
+        self.face_tagger = FaceTagger(use_gpu=False, min_faces_to_identify_human=2, min_similarity_face_count=1)
 
     def test_classify_images_by_person(self):
         image_objects = []

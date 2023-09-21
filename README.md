@@ -89,8 +89,11 @@ Here is the representation of the `ImageObject` class:
 > ```
 
 2. **Initialize the Face Tagger**:
-   Here, you can set various parameters like `use_gpu`, `image_resize_factor`, `min_faces_to_be_group`,
+   Here, you can set various parameters like `use_gpu`, `image_resize_factor`, `min_faces_to_identify_human`,
    and `min_similarity_face_count`.
+
+- **`min_faces_to_identify_human`**: Minimum number of faces required to be classified as a human.
+- **`min_similarity_face_count`**: Minimum number of similar faces required to be included in a group.
 
 ```python
 from face_tagger import FaceTagger
@@ -98,8 +101,8 @@ from face_tagger import FaceTagger
 face_tagger = FaceTagger(
     use_gpu=False,
     image_resize_factor=1.0,
-    min_faces_to_be_group=2,
-    min_similarity_face_count=1
+    min_faces_to_identify_human=4,
+    min_similarity_face_count=3
 )
 ```
 
