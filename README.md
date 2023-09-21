@@ -67,7 +67,7 @@ To utilize the Face Tagger library, follow these steps:
    instances for each one.
 
 ```python
-from utils import *
+from face_tagger.utils import *
 
 image_objects = load_images_from_directory("path_to_images_directory")
 ```
