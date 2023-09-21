@@ -56,6 +56,8 @@ class FaceTagger:
         for image_id in processed_image_ids:
             face_counts_per_image[image_id] = face_counts_per_image.get(image_id, 0) + 1
 
+        unclassified_image_ids_set = set(processed_image_ids)
+
         for group, image_id in zip(groups, processed_image_ids):
             if group != -1:
                 group_key = f"group_{group + 1}"
@@ -65,12 +67,13 @@ class FaceTagger:
 
                 if face_counts_per_image[image_id] == 1 and classified_images[group_key]["main"] is None:
                     classified_images[group_key]["main"] = image_id
-                    continue
+                else:
+                    if image_id not in classified_images[group_key]["others"]:
+                        classified_images[group_key]["others"].append(image_id)
 
-                if image_id not in classified_images[group_key]["others"]:
-                    classified_images[group_key]["others"].append(image_id)
-            else:
-                classified_images["unclassified_images"].append(image_id)
+                unclassified_image_ids_set.discard(image_id)
+
+        classified_images["unclassified_images"].extend(list(unclassified_image_ids_set))
 
         return classified_images
 
